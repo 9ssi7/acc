@@ -15,7 +15,6 @@ func New[T any](cnf Config[T]) Accumulator[T] {
 		cnf.Interval = 15 * time.Minute
 	}
 	return &accumulator[T]{
-		add:       cnf.Add,
 		processor: cnf.Processor,
 		storage:   cnf.Storage,
 		interval:  cnf.Interval,

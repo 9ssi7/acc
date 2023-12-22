@@ -7,9 +7,6 @@ import (
 
 func TestAccumulatorWithStartTime(t *testing.T) {
 	conf := Config[int]{
-		Add: func(data int) (string, error) {
-			return "id123", nil
-		},
 		Processor: func(data []int) {
 			for _, d := range data {
 				t.Logf("Processed Data: %d\n", d)
@@ -39,9 +36,6 @@ func TestAccumulatorWithStartTime(t *testing.T) {
 
 func TestAccumulatorWithInterval(t *testing.T) {
 	conf := Config[int]{
-		Add: func(data int) (string, error) {
-			return "id123", nil
-		},
 		Processor: func(data []int) {
 			for _, d := range data {
 				t.Logf("Processed Data: %d\n", d)

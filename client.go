@@ -11,7 +11,6 @@ import (
 
 // accumulator represents the core data structure that manages the accumulation process.
 type accumulator[T any] struct {
-	add       Adder[T]
 	processor ProcessorFunc[T]
 	storage   DataStorage[Data[T]]
 	interval  time.Duration

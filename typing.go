@@ -30,8 +30,6 @@ type Adder[T interface{}] func(T) (string, error)
 // Config defines the configuration structure for the accumulator mechanism.
 // It encapsulates the required parameters to initialize an accumulator.
 type Config[T interface{}] struct {
-	// Add is a function to add new items to the accumulator.
-	Add Adder[T]
 
 	// Processor is a function to process accumulated items.
 	Processor ProcessorFunc[T]
