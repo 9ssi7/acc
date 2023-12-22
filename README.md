@@ -58,7 +58,69 @@ func processFunction(data []int) {
 
 ### Advanced Configurations
 
-For more advanced configurations like choosing a custom storage or setting a specific start time, refer to the documentation or the examples provided.
+#### Using StartTime Configuration
+
+To start the accumulator processing at a specific time, you can use the `StartTime` configuration. Below is an example demonstrating how to set a start time:
+
+```go
+func main() {
+	config := acc.Config[int]{
+		Processor: processFunction,
+		StartTime: time.Date(2024, time.December, 31, 23, 59, 0, 0, time.UTC), // Processing will start on New Year's Eve at 23:59
+		// ... other configurations
+	}
+
+	accumulator := acc.New(config)
+	// Start using the accumulator
+}
+```
+
+#### Using Interval Configuration
+
+To configure the interval at which accumulated data is processed, you can set the `Interval` configuration. Below is an example demonstrating how to set an interval:
+
+```go
+func main() {
+	config := acc.Config[int]{
+		Processor: processFunction,
+		Interval:  30 * time.Second, // Data will be processed every 30 seconds
+		// ... other configurations
+	}
+
+	accumulator := acc.New(config)
+	// Start using the accumulator
+}
+```
+
+### Starting the Accumulator Asynchronously
+
+To start the accumulator asynchronously using a goroutine, you can use the following approach:
+
+```go
+func main() {
+    config := acc.Config[int]{
+        Processor: processFunction,
+        Interval:  30 * time.Second, // Data will be processed every 30 seconds
+        // ... other configurations
+    }
+
+    accumulator := acc.New(config)
+
+    // Start the accumulator in a goroutine
+    go func() {
+        if err := accumulator.Start(); err != nil {
+            fmt.Println("Error starting accumulator:", err)
+        }
+    }()
+
+    // You can continue with other operations or wait for user input to exit
+    // For example:
+    // fmt.Println("Press Ctrl+C to exit...")
+    // select {}
+}
+```
+
+By starting the accumulator in a goroutine, it will run in the background, allowing the main program flow to continue without interruption.
 
 ## Contributing
 
