@@ -19,10 +19,34 @@ To install the package, simply run:
 go get github.com/9ssi7/acc
 ```
 
-
 ## Documentation
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/9ssi7/acc.svg)](https://pkg.go.dev/github.com/9ssi7/acc)
+
+## Flow Diagrams
+
+### Continuous Insert with DB Index Issues
+
+```mermaid
+graph TD;
+    Start[Start] --> Insert1[Insert Data 1];
+    Insert1 --> Insert2[Insert Data 2];
+    Insert2 --> Insert3[Insert Data 3];
+    Insert3 --> Insert4[Insert Data 4];
+    Insert4 --> Insert5[Insert Data 5];
+    Insert5 --> IndexBroken[Index Broken];
+```
+
+### Using Accumulator for Batch Processing
+
+```mermaid
+graph TD;
+    Start[Start] --> Accumulate[Accumulate Data];
+    Accumulate --> Process[Process Data];
+    Process --> Wait[Wait 15 Minutes];
+    Wait --> Accumulate;
+```
+
 
 ## Usage
 
