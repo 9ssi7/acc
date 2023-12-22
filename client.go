@@ -1,3 +1,4 @@
+// Package acc provides an accumulator mechanism to accumulate, process, and manage data.
 package acc
 
 import (
@@ -8,6 +9,7 @@ import (
 	"github.com/9ssi7/nanoid"
 )
 
+// accumulator represents the core data structure that manages the accumulation process.
 type accumulator[T any] struct {
 	add       Adder[T]
 	processor ProcessorFunc[T]
@@ -16,6 +18,7 @@ type accumulator[T any] struct {
 	startTime time.Time
 }
 
+// Add adds a new item to the accumulator and returns its ID.
 func (a *accumulator[T]) Add(data T) (string, error) {
 	id, err := nanoid.New()
 	if err != nil {
@@ -27,6 +30,7 @@ func (a *accumulator[T]) Add(data T) (string, error) {
 	return id, nil
 }
 
+// Cancel removes an item from the accumulator based on the provided ID.
 func (a *accumulator[T]) Cancel(id string) error {
 	data, err := a.storage.Load()
 	if err != nil {
@@ -54,6 +58,8 @@ func (a *accumulator[T]) Cancel(id string) error {
 	return nil
 }
 
+// Start initiates the accumulator to process accumulated data based on the set interval.
+// If a start time is set, it waits until that time to begin processing.
 func (a *accumulator[T]) Start() error {
 	if !a.startTime.IsZero() {
 		for {
