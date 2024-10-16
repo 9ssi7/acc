@@ -2,7 +2,7 @@
 package acc
 
 import (
-	"errors"
+	"context"
 	"fmt"
 	"time"
 
@@ -18,20 +18,20 @@ type accumulator[T any] struct {
 }
 
 // Add adds a new item to the accumulator and returns its ID.
-func (a *accumulator[T]) Add(data T) (string, error) {
+func (a *accumulator[T]) Add(ctx context.Context, data T) (string, error) {
 	id, err := nanoid.New()
 	if err != nil {
 		return "", err
 	}
-	if err := a.storage.Save([]Data[T]{{Original: data, ID: id}}); err != nil {
+	if err := a.storage.Save(ctx, []Data[T]{{Original: data, ID: id}}); err != nil {
 		return "", err
 	}
 	return id, nil
 }
 
 // Cancel removes an item from the accumulator based on the provided ID.
-func (a *accumulator[T]) Cancel(id string) error {
-	data, err := a.storage.Load()
+func (a *accumulator[T]) Cancel(ctx context.Context, id string) error {
+	data, err := a.storage.Load(ctx)
 	if err != nil {
 		return err
 	}
@@ -47,10 +47,10 @@ func (a *accumulator[T]) Cancel(id string) error {
 	}
 
 	if !found {
-		return errors.New(fmt.Sprintf("data not found with given ID %s", id))
+		return fmt.Errorf("data not found with given ID %s", id)
 	}
 
-	if err := a.storage.Save(newData); err != nil {
+	if err := a.storage.Save(ctx, newData); err != nil {
 		return err
 	}
 
@@ -59,7 +59,7 @@ func (a *accumulator[T]) Cancel(id string) error {
 
 // Start initiates the accumulator to process accumulated data based on the set interval.
 // If a start time is set, it waits until that time to begin processing.
-func (a *accumulator[T]) Start() error {
+func (a *accumulator[T]) Start(ctx context.Context) error {
 	if !a.startTime.IsZero() {
 		for {
 			now := time.Now().UTC()
@@ -73,20 +73,18 @@ func (a *accumulator[T]) Start() error {
 	ticker := time.NewTicker(a.interval)
 	defer ticker.Stop()
 
-	for {
-		select {
-		case <-ticker.C:
-			data, err := a.storage.Load()
-			if err != nil {
-				return err
+	for range ticker.C {
+		data, err := a.storage.Load(ctx)
+		if err != nil {
+			return err
+		}
+		if len(data) > 0 {
+			var originalData []T
+			for _, d := range data {
+				originalData = append(originalData, d.Original)
 			}
-			if len(data) > 0 {
-				var originalData []T
-				for _, d := range data {
-					originalData = append(originalData, d.Original)
-				}
-				a.processor(originalData)
-			}
+			a.processor(ctx, originalData)
 		}
 	}
+	return nil
 }

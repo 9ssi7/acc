@@ -2,6 +2,7 @@
 package acc
 
 import (
+	"context"
 	"time"
 )
 
@@ -12,20 +13,20 @@ type Data[T interface{}] struct {
 }
 
 // ProcessorFunc defines the function signature for processing data.
-type ProcessorFunc[T interface{}] func(data []T)
+type ProcessorFunc[T interface{}] func(ctx context.Context, data []T)
 
 // Accumulator defines the interface for the accumulator mechanism.
 type Accumulator[T interface{}] interface {
 	// Add adds a new item to the accumulator and returns its ID.
-	Add(T) (string, error)
+	Add(context.Context, T) (string, error)
 	// Cancel removes an item from the accumulator based on the provided ID.
-	Cancel(string) error
+	Cancel(context.Context, string) error
 	// Start initiates the accumulator to process accumulated data.
-	Start() error
+	Start(context.Context) error
 }
 
 // Adder defines the function signature for adding items to the accumulator.
-type Adder[T interface{}] func(T) (string, error)
+type Adder[T interface{}] func(context.Context, T) (string, error)
 
 // Config defines the configuration structure for the accumulator mechanism.
 // It encapsulates the required parameters to initialize an accumulator.

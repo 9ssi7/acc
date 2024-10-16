@@ -65,16 +65,14 @@ import (
 )
 
 func main() {
-	config := acc.Config[int]{
+	accumulator := acc.New(acc.Config[int]{
 		Processor: processFunction,
 		// ... other configurations
-	}
-
-	accumulator := acc.New(config)
+	})
 	// Start using the accumulator
 }
 
-func processFunction(data []int) {
+func processFunction(ctx context.Context, data []int) {
 	// Your logic to process data
 	fmt.Println("Processing data:", data)
 }
@@ -88,13 +86,11 @@ To start the accumulator processing at a specific time, you can use the `StartTi
 
 ```go
 func main() {
-	config := acc.Config[int]{
+	accumulator := acc.New(acc.Config[int]{
 		Processor: processFunction,
 		StartTime: time.Date(2024, time.December, 31, 23, 59, 0, 0, time.UTC), // Processing will start on New Year's Eve at 23:59
 		// ... other configurations
-	}
-
-	accumulator := acc.New(config)
+	})
 	// Start using the accumulator
 }
 ```
@@ -105,13 +101,11 @@ To configure the interval at which accumulated data is processed, you can set th
 
 ```go
 func main() {
-	config := acc.Config[int]{
+	accumulator := acc.New(acc.Config[int]{
 		Processor: processFunction,
 		Interval:  30 * time.Second, // Data will be processed every 30 seconds
 		// ... other configurations
-	}
-
-	accumulator := acc.New(config)
+	})
 	// Start using the accumulator
 }
 ```
@@ -122,17 +116,15 @@ To start the accumulator asynchronously using a goroutine, you can use the follo
 
 ```go
 func main() {
-    config := acc.Config[int]{
+    accumulator := acc.New(acc.Config[int]{
         Processor: processFunction,
         Interval:  30 * time.Second, // Data will be processed every 30 seconds
         // ... other configurations
-    }
-
-    accumulator := acc.New(config)
+    })
 
     // Start the accumulator in a goroutine
     go func() {
-        if err := accumulator.Start(); err != nil {
+        if err := accumulator.Start(context.Background()); err != nil {
             fmt.Println("Error starting accumulator:", err)
         }
     }()

@@ -1,6 +1,9 @@
 package acc
 
-import "testing"
+import (
+	"context"
+	"testing"
+)
 
 func TestInMemoryStorage(t *testing.T) {
 	storage := NewInMemoryStorage[int]()
@@ -8,13 +11,12 @@ func TestInMemoryStorage(t *testing.T) {
 		{Original: 1, ID: "id1"},
 		{Original: 2, ID: "id2"},
 	}
-
-	// Veri kaydetme ve yükleme işlemleri
-	if err := storage.Save(data); err != nil {
+	ctx := context.Background()
+	if err := storage.Save(ctx, data); err != nil {
 		t.Errorf("Error saving data to in-memory storage: %v", err)
 	}
 
-	loadedData, err := storage.Load()
+	loadedData, err := storage.Load(ctx)
 	if err != nil {
 		t.Errorf("Error loading data from in-memory storage: %v", err)
 	}
